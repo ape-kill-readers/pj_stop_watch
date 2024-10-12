@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランキング画面</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../lib/ranking.js"></script>
+</head>
+<body>
+    <h1>ランキング画面</h1>
+    <label for="category-select">部門を選択:</label>
+    <select id="category-select">
+        <option value="10秒部">10秒部</option>
+        <option value="20秒部">20秒部</option>
+        <option value="30秒部">30秒部</option>
+    </select>
+    <h2>上位5件</h2>
+    <ul id="ranking-list">
+        <!-- ランキング結果がここに表示される -->
+    </ul>
+    <button id="back-to-start">スタート画面に戻る</button>
+
+    <script>
+        $(document).ready(function () {
+            // プルダウンメニューの選択が変更された際にランキングを表示
+            $("#category-select").change(function () {
+                loadRankings($(this).val());
+            });
+
+            // 初期表示として10秒部のランキングを読み込む
+            loadRankings("10秒部");
+
+            function loadRankings(category) {
+                const results = JSON.parse(localStorage.getItem("rankings")) || {
+                    "10秒部": [],
+                    "20秒部": [],
+                    "30秒部": []
+                };
+                const rankingList = $("#ranking-list");
+                rankingList.empty(); // リストをクリア
+
+                // 選択された部門のランキングを表示
+                rankingList.append(`<h3>${category}</h3>`);
+                results[category].forEach((result, index) => {
+                    rankingList.append(`<li>順位 ${index + 1}: ${result.player1Name} (実際 - ${result.player1Time}秒), ${result.player2Name} (実際 - ${result.player2Time}秒) | 合計タイム - ${result.totalTime.toFixed(2)}秒 (目標 - ${result.totalGoal.toFixed(2)}秒, 差 - ${result.totalDifference.toFixed(2)}秒)</li>`);
+                });
+            }
+
+            // 「スタート画面に戻る」ボタンがクリックされた際にインデックス画面に遷移
+            $("#back-to-start").on("click", function () {
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+</html>
